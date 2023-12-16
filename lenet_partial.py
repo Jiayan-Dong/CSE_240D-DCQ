@@ -523,19 +523,23 @@ def train(train_loader, model, original_model, criterion, optimizer, epoch,
 
         if args.kd_policy is None:
             torch.set_printoptions(precision=10)
-            """ current ternary (quantized) model"""
-            output = model(inputs)
-            
             """ original full-precision model"""
+            original_model.module.freeze()
             fp_output = original_model(inputs).detach()
+            fp_imm = original_model.module.act_conv2.detach()
             
+            """ current ternary (quantized) model"""
+            model.module.freeze_partial(range(0, 5))
+            output = model(inputs)
+            imm = model.module.act_conv2
             """ different losses """
-            loss = criterion(output, target)
-            
             # loss1 = criterion(output, target)
             # new_criterion = nn.MSELoss()
             # loss2 = new_criterion(torch.nn.functional.softmax(output, dim=1), torch.nn.functional.softmax(fp_output, dim=1))
             # loss = loss1 * (1 - args.kd_distill_wt) + loss2 * args.kd_distill_wt
+            
+            new_criterion = nn.MSELoss()
+            loss = new_criterion(imm, fp_imm)
             
             """ Measure accuracy and record loss """
             classerr.add(output.data, target)

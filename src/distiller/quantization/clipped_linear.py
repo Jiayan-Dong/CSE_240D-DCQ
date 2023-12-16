@@ -67,8 +67,8 @@ class ClippedLinearQuantization(nn.Module):
         self.inplace = inplace
 
     def forward(self, input):
-        # input = clamp(input, 0, self.clip_val, self.inplace) # BAD BAD BAD TODO
-        input = torch.sigmoid(input)
+        input = clamp(input * 0.1, 0, self.clip_val, self.inplace) # BAD BAD BAD TODO
+        # input = torch.sigmoid(input)
         input = LinearQuantizeSTE.apply(input.tanh(), self.scale, self.zero_point, self.dequantize, self.inplace)
         return input
 
@@ -165,25 +165,16 @@ def dorefa_quantize_param(param_fp, param_meta):
         return output
     if param_meta.num_bits == 1:
         out = DorefaParamsBinarizationSTE.apply(param_fp)
-    # if param_meta.num_bits == 1:
-    #     return ternary_quantize(param_fp)
-    # else:
-        # output = torch.tanh(param_fp)
-        # max_w = torch.max(torch.abs(param_fp)).detach()
-        # output = output / 2 / max_w + 0.5  # 归一化-[0,1]
-        # scale = 1 / float(2 ** param_meta.num_bits - 1)  # scale
-        # output = round(output / scale) * scale  # 量化/反量化 # Finally!
-        # output = (2 * output - 1)
-        # out = output
-    scale, zero_point = asymmetric_linear_quantization_params(param_meta.num_bits, 0, 1, signed=False)
-    out = param_fp.tanh()
-    if (2 * out.abs().max()) != 0:
-        out = out / (2 * out.abs().max()) + 0.5
     else:
-        out = 1 # (x -> 0) lim x / 2x + 0.5 = 1
-    out = LinearQuantizeSTE.apply(out, scale, zero_point, True, False)
-    out = 2 * out - 1
-    assert not torch.isnan(out).any()
+        scale, zero_point = asymmetric_linear_quantization_params(param_meta.num_bits, 0, 1, signed=False)
+        out = param_fp.tanh()
+        if (2 * out.abs().max()) != 0:
+            out = out / (2 * out.abs().max()) + 0.5
+        else:
+            out = 1 # (x -> 0) lim x / 2x + 0.5 = 1
+        out = LinearQuantizeSTE.apply(out, scale, zero_point, True, False)
+        out = 2 * out - 1
+        # assert not torch.isnan(out).any()
     return out
 
 

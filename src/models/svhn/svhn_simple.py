@@ -29,7 +29,7 @@ class SVHN(nn.Module):
         return x
     
     def partial_forward(self, x):
-        x = self.features[7:](x)
+        x = self.features[14:](x)
         x = x.view(x.size(0), -1)
         x = self.classifier(x)
         return x
@@ -45,6 +45,7 @@ class SVHN(nn.Module):
     def freeze_partial(self, layer_list):
         child_counter = 0
         for child in itertools.chain(self.features, self.classifier):
+            # print(child_counter, child)
             if child_counter not in layer_list:
                 for param in child.parameters():
                     param.requires_grad = False
@@ -52,6 +53,7 @@ class SVHN(nn.Module):
                 for param in child.parameters():
                     param.requires_grad = True
             child_counter += 1
+        # assert False
 
 def make_layers(cfg, batch_norm=False):
     layers = []

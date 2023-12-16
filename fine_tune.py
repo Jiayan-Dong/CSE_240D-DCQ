@@ -530,12 +530,12 @@ def train(train_loader, model, original_model, criterion, optimizer, epoch,
             fp_output = original_model(inputs).detach()
             
             """ different losses """
-            loss = criterion(output, target)
-            
-            # loss1 = criterion(output, target)
-            # new_criterion = nn.MSELoss()
-            # loss2 = new_criterion(torch.nn.functional.softmax(output, dim=1), torch.nn.functional.softmax(fp_output, dim=1))
-            # loss = loss1 * (1 - args.kd_distill_wt) + loss2 * args.kd_distill_wt
+            # loss = criterion(output, target)
+            ratio = 0.0
+            loss1 = criterion(output, target)
+            new_criterion = nn.MSELoss()
+            loss2 = new_criterion(torch.nn.functional.softmax(output, dim=1), torch.nn.functional.softmax(fp_output, dim=1))
+            loss = loss1 * (1 - ratio) + loss2 * ratio
             
             """ Measure accuracy and record loss """
             classerr.add(output.data, target)

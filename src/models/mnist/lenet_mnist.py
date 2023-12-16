@@ -35,25 +35,18 @@ class Lenet(nn.Module):
         self.activations = {}
 
     def forward(self, x):
-        # x = self.pool(self.relu1(self.conv1(x)))
-        # self.act_conv2 = self.pool(F.relu(self.conv1(x)))
-        # self.act_conv2 = F.relu(self.conv2(self.act_conv2))
-        # x = self.pool(F.relu(self.conv1(x)))
-        # self.act_conv2 = self.pool(F.relu(self.conv1(x)))
-        # self.act_conv2 = F.relu(self.conv2(self.act_conv2))
         x = self.pool(self.relu1(self.conv1(x)))
-        # #print(set(x.data.cpu().numpy().ravel()))
         x = self.pool(self.relu2(self.conv2(x)))
+        self.act_conv2 = x
         x = x.view(-1, 800)
         x = self.relu3(self.fc1(x))
         x = self.relu4(self.fc2(x))
-        # self.act_conv2 = x
-        # torch.set_printoptions(precision=10)
-        # x = x.view(-1, 800)
-        # x = self.relu3(self.fc1(x))
-        # x = self.relu4(self.fc2(x))
-        # self.act_fc2 = x
-        #x = nn.Threshold(0.2, 0.0)#ActivationZeroThreshold(x)
+        return x
+    
+    def partial_forward(self, x):
+        x = x.view(-1, 800)
+        x = self.relu3(self.fc1(x))
+        x = self.relu4(self.fc2(x))
         return x
     
     def freeze(self):

@@ -3,6 +3,7 @@ quantizers:
     class: DorefaQuantizer
     bits_activations: 32
     bits_weights: 1
+    quantize_bias: True
 
 lr_schedulers:
   training_lr:

@@ -6,6 +6,7 @@
 ## Requirement 
 - Python 3.10.12
 - virtualenv
+- CUDA GPU
 
 ## Instruction
 1. run `virtualenv env` to create a python virtual environment

@@ -1,7 +1,7 @@
 # CSE_240D-DCQ
 
 ## Warning
-**This code is based on an obsolete project called [*distiller*](https://github.com/IntelLabs/distiller)**, we managed to modified the source code to let it run on latest version of python. However, it is currently known that non-deterministic  results may occur when running the same command. If the results produced are completely different from expectations, it is recommended to execute the command multiple times.
+**This code is based on an obsolete project called [*distiller*](https://github.com/IntelLabs/distiller)**, we managed to modified the source code to let it run on latest version of python. 
 
 ## Requirement 
 - Python 3.10.12
@@ -17,6 +17,9 @@
 - Training script in `./` directory
 - models in `./src/models`
 - quantization in `./src/distiller/quantization`
+
+## Issues
+It is currently known that non-deterministic  results may occur when running the same command. If the results produced are completely different from expectations, it is recommended to execute the command multiple times.
 
 ## Contact
 - Contact jid001@ucsd.edu if you have any problem.
